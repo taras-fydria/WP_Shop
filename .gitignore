@@ -1,3 +1,5 @@
 /.idea
 /.env
 /.env.prod
+/plugin/node_modules
+/plugin/dist
