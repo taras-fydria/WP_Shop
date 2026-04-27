@@ -3,3 +3,9 @@
 /.env.prod
 /plugin/node_modules
 /plugin/dist
+# ignore everything in plugins/
+plugins/*
+
+  # except our plugin
+!plugins/sleepy-owl-shop/
+/plugins/sleepy-owl-shop/vendor/

@@ -16,6 +16,7 @@ services:
   wordpress:
     build:
       context: .
+      target: prod
       args:
         PLUGIN_SLUG: ${PLUGIN_SLUG}
     restart: always
@@ -43,6 +44,7 @@ services:
   wpcli:
     build:
       context: .
+      target: prod
       args:
         PLUGIN_SLUG: ${PLUGIN_SLUG}
     user: www-data

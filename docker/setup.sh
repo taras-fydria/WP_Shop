@@ -24,7 +24,7 @@ if [ ! -e "${PLUGIN_DIR}" ]; then
 fi
 
 # ── Install WordPress (skip if already installed) ─────────────────────────────
-if ! wp core is-installed --path=/var/www/html --allow-root 2>/dev/null; then
+if ! wp core is-installed --path=/var/www/html 2>/dev/null; then
     echo "[setup] Installing WordPress..."
     wp core install \
         --path=/var/www/html \
@@ -33,11 +33,10 @@ if ! wp core is-installed --path=/var/www/html --allow-root 2>/dev/null; then
         --admin_user="${WP_ADMIN_USER}" \
         --admin_password="${WP_ADMIN_PASSWORD}" \
         --admin_email="${WP_ADMIN_EMAIL}" \
-        --skip-email \
-        --allow-root
+        --skip-email
 
     echo "[setup] Activating plugin '${PLUGIN_SLUG}'..."
-    wp plugin activate "${PLUGIN_SLUG}" --path=/var/www/html --allow-root
+    wp plugin activate "${PLUGIN_SLUG}" --path=/var/www/html
 
     echo "[setup] Done."
 else
