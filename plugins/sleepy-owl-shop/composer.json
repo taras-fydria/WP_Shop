@@ -9,7 +9,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SleepyOwl\\": "app/"
+            "SleepyOwl\\": ["app/", "src/"]
         }
     },
     "autoload-dev": {

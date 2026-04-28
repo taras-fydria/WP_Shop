@@ -1,0 +1,16 @@
+<?php
+
+declare(strict_types=1);
+
+namespace SleepyOwl\Order\Domain\Event;
+
+use SleepyOwl\Order\Domain\Model\ValueObject\SubOrderId;
+use SleepyOwl\Shared\Domain\DomainEvent;
+
+final readonly class SubOrderCompleted implements DomainEvent
+{
+    public function __construct(
+        public SubOrderId $subOrderId,
+        public \DateTimeImmutable $occurredAt,
+    ) {}
+}

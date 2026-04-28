@@ -85,7 +85,10 @@ Each context follows this internal structure:
 ```
 {Context}/
 ├── Domain/
-│   ├── Model/                # Aggregate root, entities, value objects
+│   ├── Model/
+│   │   ├── Aggregate/        # Aggregate roots
+│   │   ├── Entity/           # Entities
+│   │   └── ValueObject/      # Value objects
 │   ├── Event/                # Domain events
 │   ├── Repository/           # Repository interfaces (ports)
 │   ├── Service/              # Domain services
