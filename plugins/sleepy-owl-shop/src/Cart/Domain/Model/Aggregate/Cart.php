@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SleepyOwl\Cart\Domain\Model\Aggregate;
 
 use DateTimeImmutable;
-use DomainEvent;
 use SleepyOwl\Cart\Domain\Event\CartCheckedOut;
 use SleepyOwl\Cart\Domain\Event\CartCleared;
 use SleepyOwl\Cart\Domain\Event\CartItemQuantityUpdated;
@@ -16,16 +15,15 @@ use SleepyOwl\Cart\Domain\Model\Entity\CartItem;
 use SleepyOwl\Cart\Domain\Model\ValueObject\CartId;
 use SleepyOwl\Cart\Domain\Model\ValueObject\Quantity;
 use SleepyOwl\Catalog\Domain\Model\ValueObject\ProductId;
+use SleepyOwl\Shared\Domain\AggregateRoot;
 use SleepyOwl\Shared\Domain\Model\ValueObject\Money;
 use SleepyOwl\Shared\Domain\Model\ValueObject\VendorId;
 
-final class Cart
+final class Cart extends AggregateRoot
 {
     /** @var array<string, CartItem>  keyed by ProductId value */
     private array $items = [];
     private DateTimeImmutable $updatedAt;
-    /** @var DomainEvent[] */
-    private array $events = [];
 
     public function __construct(
         private readonly CartId $id,
@@ -49,14 +47,14 @@ final class Cart
         }
 
         $this->updatedAt = new DateTimeImmutable();
-        $this->events[]  = new ItemAddedToCart(
+        $this->raiseEvent(new ItemAddedToCart(
             $this->id,
             $productId,
             $vendorId,
             $this->items[$key]->getQuantity(),
             $unitPrice,
             new DateTimeImmutable(),
-        );
+        ));
     }
 
     public function removeItem(ProductId $productId): void
@@ -69,7 +67,7 @@ final class Cart
 
         unset($this->items[$key]);
         $this->updatedAt = new DateTimeImmutable();
-        $this->events[]  = new ItemRemovedFromCart($this->id, $productId, new DateTimeImmutable());
+        $this->raiseEvent(new ItemRemovedFromCart($this->id, $productId));
     }
 
     public function updateQuantity(ProductId $productId, Quantity $quantity): void
@@ -82,14 +80,14 @@ final class Cart
 
         $this->items[$key] = $this->items[$key]->withQuantity($quantity);
         $this->updatedAt   = new DateTimeImmutable();
-        $this->events[]    = new CartItemQuantityUpdated($this->id, $productId, $quantity, new DateTimeImmutable());
+        $this->raiseEvent(new CartItemQuantityUpdated($this->id, $productId, $quantity));
     }
 
     public function clear(): void
     {
         $this->items     = [];
         $this->updatedAt = new DateTimeImmutable();
-        $this->events[]  = new CartCleared($this->id, new DateTimeImmutable());
+        $this->raiseEvent(new CartCleared($this->id));
     }
 
     public function checkout(): void
@@ -98,12 +96,12 @@ final class Cart
             throw new CartException('Cannot checkout an empty cart.');
         }
 
-        $this->events[] = new CartCheckedOut(
+        $this->raiseEvent(new CartCheckedOut(
             $this->id,
             $this->buyerRef,
             array_values($this->items),
             new DateTimeImmutable(),
-        );
+        ));
     }
 
     public function getId(): CartId
@@ -130,13 +128,5 @@ final class Cart
     public function getUpdatedAt(): DateTimeImmutable
     {
         return $this->updatedAt;
-    }
-
-    /** @return DomainEvent[] */
-    public function releaseEvents(): array
-    {
-        $events       = $this->events;
-        $this->events = [];
-        return $events;
     }
 }

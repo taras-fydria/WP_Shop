@@ -17,9 +17,10 @@ use SleepyOwl\Order\Domain\Model\ValueObject\OrderLine;
 use SleepyOwl\Order\Domain\Model\ValueObject\OrderStatus;
 use SleepyOwl\Order\Domain\Model\ValueObject\SubOrderStatus;
 use SleepyOwl\Order\Domain\Service\OrderSplitter;
+use SleepyOwl\Shared\Domain\AggregateRoot;
 use SleepyOwl\Shared\Domain\Model\ValueObject\Money;
 
-final class MarketplaceOrder
+final class MarketplaceOrder extends AggregateRoot
 {
     private OrderStatus $status;
 
@@ -27,9 +28,6 @@ final class MarketplaceOrder
     private array $subOrders = [];
 
     private bool $isSplit = false;
-
-    /** @var DomainEvent[] */
-    private array $events = [];
 
     private function __construct(
         private readonly OrderId $id,
@@ -50,8 +48,8 @@ final class MarketplaceOrder
             throw new OrderException('Cannot place an order with no lines.');
         }
 
-        $order           = new self($id, $lines, $totalAmount, new DateTimeImmutable());
-        $order->events[] = new OrderPlaced($id, $order->placedAt);
+        $order = new self($id, $lines, $totalAmount, new DateTimeImmutable());
+        $order->raiseEvent(new OrderPlaced($id));
 
         return $order;
     }
@@ -64,8 +62,8 @@ final class MarketplaceOrder
             );
         }
 
-        $this->status   = OrderStatus::Paid;
-        $this->events[] = new OrderPaid($this->id, new DateTimeImmutable());
+        $this->status = OrderStatus::Paid;
+        $this->raiseEvent(new OrderPaid($this->id));
     }
 
     public function split(OrderSplitter $splitter): void
@@ -83,7 +81,7 @@ final class MarketplaceOrder
         $this->subOrders = $splitter->split($this->lines);
         $this->isSplit   = true;
         $this->status    = OrderStatus::Processing;
-        $this->events[]  = new OrderSplit($this->id, count($this->subOrders), new DateTimeImmutable());
+        $this->raiseEvent(new OrderSplit($this->id, count($this->subOrders)));
     }
 
     public function complete(): void
@@ -94,8 +92,8 @@ final class MarketplaceOrder
             }
         }
 
-        $this->status   = OrderStatus::Completed;
-        $this->events[] = new OrderCompleted($this->id, new DateTimeImmutable());
+        $this->status = OrderStatus::Completed;
+        $this->raiseEvent(new OrderCompleted($this->id));
     }
 
     public function cancel(): void
@@ -106,8 +104,8 @@ final class MarketplaceOrder
             }
         }
 
-        $this->status   = OrderStatus::Cancelled;
-        $this->events[] = new OrderCancelled($this->id, new DateTimeImmutable());
+        $this->status = OrderStatus::Cancelled;
+        $this->raiseEvent(new OrderCancelled($this->id));
     }
 
     public function getId(): OrderId
@@ -134,13 +132,5 @@ final class MarketplaceOrder
     public function getPlacedAt(): DateTimeImmutable
     {
         return $this->placedAt;
-    }
-
-    /** @return DomainEvent[] */
-    public function releaseEvents(): array
-    {
-        $events       = $this->events;
-        $this->events = [];
-        return $events;
     }
 }

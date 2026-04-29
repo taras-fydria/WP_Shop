@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace SleepyOwl\Order\Domain\Event;
 
 use SleepyOwl\Order\Domain\Model\ValueObject\OrderId;
-use SleepyOwl\Shared\Domain\Events\DomainEvent;
+use SleepyOwl\Shared\Domain\Events\AbstractDomainEvent;
 
-final readonly class OrderCompleted implements DomainEvent
+final readonly class OrderCompleted extends AbstractDomainEvent
 {
-    public function __construct(
-        public OrderId $orderId,
-        public \DateTimeImmutable $occurredAt,
-    ) {}
+    public function __construct(public OrderId $orderId)
+    {
+        parent::__construct();
+    }
 }

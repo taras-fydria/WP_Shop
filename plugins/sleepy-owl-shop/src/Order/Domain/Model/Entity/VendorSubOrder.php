@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SleepyOwl\Order\Domain\Model\Entity;
 
 use DateTimeImmutable;
-use DomainEvent;
 use SleepyOwl\Order\Domain\Event\SubOrderCompleted;
 use SleepyOwl\Order\Domain\Event\SubOrderConfirmed;
 use SleepyOwl\Order\Domain\Event\SubOrderDispatched;
@@ -13,16 +12,15 @@ use SleepyOwl\Order\Domain\Exception\OrderException;
 use SleepyOwl\Order\Domain\Model\ValueObject\OrderLine;
 use SleepyOwl\Order\Domain\Model\ValueObject\SubOrderId;
 use SleepyOwl\Order\Domain\Model\ValueObject\SubOrderStatus;
+use SleepyOwl\Shared\Domain\AggregateRoot;
 use SleepyOwl\Shared\Domain\Model\ValueObject\CommissionRate;
 use SleepyOwl\Shared\Domain\Model\ValueObject\Money;
 use SleepyOwl\Shared\Domain\Model\ValueObject\VendorId;
 
-final class VendorSubOrder
+final class VendorSubOrder extends AggregateRoot
 {
     private SubOrderStatus $status = SubOrderStatus::Pending;
     private readonly Money $subtotal;
-    /** @var DomainEvent[] */
-    private array $events = [];
 
     /**
      * @param OrderLine[] $lines
@@ -52,8 +50,8 @@ final class VendorSubOrder
             );
         }
 
-        $this->status   = SubOrderStatus::Confirmed;
-        $this->events[] = new SubOrderConfirmed($this->id, new DateTimeImmutable());
+        $this->status = SubOrderStatus::Confirmed;
+        $this->raiseEvent(new SubOrderConfirmed($this->id));
     }
 
     public function dispatch(): void
@@ -64,8 +62,8 @@ final class VendorSubOrder
             );
         }
 
-        $this->status   = SubOrderStatus::Dispatched;
-        $this->events[] = new SubOrderDispatched($this->id, new DateTimeImmutable());
+        $this->status = SubOrderStatus::Dispatched;
+        $this->raiseEvent(new SubOrderDispatched($this->id));
     }
 
     public function complete(): void
@@ -76,8 +74,8 @@ final class VendorSubOrder
             );
         }
 
-        $this->status   = SubOrderStatus::Completed;
-        $this->events[] = new SubOrderCompleted($this->id, new DateTimeImmutable());
+        $this->status = SubOrderStatus::Completed;
+        $this->raiseEvent(new SubOrderCompleted($this->id));
     }
 
     public function getId(): SubOrderId
@@ -109,13 +107,5 @@ final class VendorSubOrder
     public function getCommissionRate(): CommissionRate
     {
         return $this->commissionRate;
-    }
-
-    /** @return DomainEvent[] */
-    public function releaseEvents(): array
-    {
-        $events       = $this->events;
-        $this->events = [];
-        return $events;
     }
 }

@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace SleepyOwl\Cart\Domain\Event;
 
-use DateTimeImmutable;
 use SleepyOwl\Cart\Domain\Model\Entity\CartItem;
 use SleepyOwl\Cart\Domain\Model\ValueObject\CartId;
-use SleepyOwl\Shared\Domain\Events\DomainEvent;
+use SleepyOwl\Shared\Domain\Events\AbstractDomainEvent;
 
-final readonly class CartCheckedOut implements DomainEvent
+final readonly class CartCheckedOut extends AbstractDomainEvent
 {
     /**
      * @param CartItem[] $items snapshot of cart contents at checkout time
@@ -18,6 +17,7 @@ final readonly class CartCheckedOut implements DomainEvent
         public CartId $cartId,
         public string $buyerRef,
         public array $items,
-        public DateTimeImmutable $occurredAt,
-    ) {}
+    ) {
+        parent::__construct();
+    }
 }
