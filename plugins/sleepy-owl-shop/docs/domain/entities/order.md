@@ -12,17 +12,17 @@
 Represents the buyer's full order. Contains all vendor sub-orders. Owns the lifecycle from placement to completion. The buyer sees only this entity — sub-orders are internal.
 
 ### Identity
-`OrderId` — wraps the WooCommerce order ID.
+`OrderId` — UUID, immutable after creation.
 
 ### State
 
 | Field          | Type            | Notes                                              |
 |----------------|-----------------|----------------------------------------------------|
 | `id`           | `OrderId`       | Immutable                                          |
+| `buyerRef`     | `string`        | WP user ID or anonymous session token — carried from `CartCheckedOut` |
 | `status`       | `OrderStatus`   | `pending`, `paid`, `processing`, `completed`, `cancelled` |
 | `subOrders`    | `VendorSubOrder[]` | Created during order split                      |
 | `totalAmount`  | `Money`         | Full amount paid by buyer                          |
-| `commission`   | `Commission`    | Platform's cut (calculated at split time)          |
 | `placedAt`     | `DateTimeImmutable` |                                                |
 
 ### Invariants
@@ -34,7 +34,7 @@ Represents the buyer's full order. Contains all vendor sub-orders. Owns the life
 
 | Method                    | Description                                              |
 |---------------------------|----------------------------------------------------------|
-| `place()`                 | Creates order in `pending`, raises `OrderPlaced`         |
+| `place(buyerRef)`         | Creates order in `pending`, raises `OrderPlaced`         |
 | `markAsPaid()`            | Transitions to `paid`, raises `OrderPaid`                |
 | `split(OrderSplitter)`    | Creates `VendorSubOrder` per vendor, raises `OrderSplit` |
 | `complete()`              | All sub-orders done, raises `OrderCompleted`             |
@@ -51,7 +51,7 @@ Represents the buyer's full order. Contains all vendor sub-orders. Owns the life
 The portion of the marketplace order belonging to a single vendor. Has its own lifecycle independent of other sub-orders. Triggers payout and shipment creation.
 
 ### Identity
-`SubOrderId` — UUID, independent of WooCommerce.
+`SubOrderId` — UUID, immutable after creation.
 
 ### State
 
@@ -62,20 +62,21 @@ The portion of the marketplace order belonging to a single vendor. Has its own l
 | `lines`      | `OrderLine[]`    | One line per product                               |
 | `status`     | `SubOrderStatus` | `pending`, `confirmed`, `dispatched`, `completed`  |
 | `subtotal`   | `Money`          | Sum of lines for this vendor                       |
-| `commission` | `Commission`     | Platform cut from this sub-order                   |
+| `commissionRate` | `CommissionRate` | Snapshot of vendor's rate at split time — immutable. Protects historical orders from future rate changes. |
 
 ### Invariants
 - Must have at least one `OrderLine`
-- Cannot be dispatched without a `TrackingNumber`
-- Commission cannot exceed subtotal
+- `commissionRate` must be between 0% and 100%
 
 ### Behaviour
 
-| Method               | Description                                             |
-|----------------------|---------------------------------------------------------|
-| `confirm()`          | Vendor accepted, raises `SubOrderConfirmed`             |
-| `dispatch(TrackingNumber)` | Raises `SubOrderDispatched`                       |
-| `complete()`         | Raises `SubOrderCompleted`, triggers `PayoutInitiated`  |
+| Method       | Description                                            |
+|--------------|--------------------------------------------------------|
+| `confirm()`  | Vendor accepted, raises `SubOrderConfirmed`            |
+| `dispatch()` | Raises `SubOrderDispatched`                            |
+| `complete()` | Raises `SubOrderCompleted`, triggers `PayoutInitiated` |
+
+> `dispatch()` takes no arguments. It is called by an Application handler that listens to `ShipmentCreated` from the Shipping context. `TrackingNumber` is a Shipping concern and is never stored in `VendorSubOrder`.
 
 ### Domain events raised
 `SubOrderConfirmed`, `SubOrderDispatched`, `SubOrderCompleted`

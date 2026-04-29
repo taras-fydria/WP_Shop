@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use SleepyOwl\Order\Domain\Model\ValueObject\Commission;
 use SleepyOwl\Order\Domain\Service\CommissionEngine;
-use SleepyOwl\Vendor\Domain\Model\ValueObject\VendorId;
+use SleepyOwl\Shared\Domain\Model\ValueObject\CommissionRate;
+use SleepyOwl\Shared\Domain\Model\ValueObject\VendorId;
 
 test('returns default rate for unknown vendor', function () {
     $engine = new CommissionEngine(defaultRate: 10);
@@ -41,7 +41,7 @@ test('returns Commission instance', function () {
 
     $result = $engine->calculateFor(new VendorId('v'));
 
-    expect($result)->toBeInstanceOf(Commission::class);
+    expect($result)->toBeInstanceOf(CommissionRate::class);
 });
 
 test('supports zero default rate', function () {

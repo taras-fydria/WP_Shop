@@ -7,10 +7,11 @@ namespace SleepyOwl\Order\Domain\Service;
 use SleepyOwl\Order\Domain\Model\Entity\VendorSubOrder;
 use SleepyOwl\Order\Domain\Model\ValueObject\OrderLine;
 use SleepyOwl\Order\Domain\Model\ValueObject\SubOrderId;
+use SleepyOwl\Order\Domain\Service\CommissionEngineInterface;
 
 final class OrderSplitter
 {
-    public function __construct(private readonly CommissionEngine $commissionEngine) {}
+    public function __construct(private readonly CommissionEngineInterface $commissionEngine) {}
 
     /**
      * @param  OrderLine[]      $lines
@@ -30,7 +31,7 @@ final class OrderSplitter
                 id:         SubOrderId::generate(),
                 vendorId:   $vendorId,
                 lines:      $vendorLines,
-                commission: $this->commissionEngine->calculateFor($vendorId),
+                commissionRate: $this->commissionEngine->calculateFor($vendorId),
             );
         }
 

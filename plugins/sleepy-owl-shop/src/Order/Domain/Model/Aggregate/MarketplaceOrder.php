@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SleepyOwl\Order\Domain\Model\Aggregate;
 
+use DateTimeImmutable;
 use SleepyOwl\Order\Domain\Event\OrderCancelled;
 use SleepyOwl\Order\Domain\Event\OrderCompleted;
 use SleepyOwl\Order\Domain\Event\OrderPaid;
@@ -16,15 +17,17 @@ use SleepyOwl\Order\Domain\Model\ValueObject\OrderLine;
 use SleepyOwl\Order\Domain\Model\ValueObject\OrderStatus;
 use SleepyOwl\Order\Domain\Model\ValueObject\SubOrderStatus;
 use SleepyOwl\Order\Domain\Service\OrderSplitter;
-use SleepyOwl\Shared\Domain\DomainEvent;
-use SleepyOwl\Shared\Domain\Money;
+use SleepyOwl\Shared\Domain\Model\ValueObject\Money;
 
 final class MarketplaceOrder
 {
     private OrderStatus $status;
+
     /** @var VendorSubOrder[] */
     private array $subOrders = [];
+
     private bool $isSplit = false;
+
     /** @var DomainEvent[] */
     private array $events = [];
 
@@ -33,7 +36,7 @@ final class MarketplaceOrder
         /** @var OrderLine[] */
         private readonly array $lines,
         private readonly Money $totalAmount,
-        private readonly \DateTimeImmutable $placedAt,
+        private readonly DateTimeImmutable $placedAt,
     ) {
         $this->status = OrderStatus::Pending;
     }
@@ -47,7 +50,7 @@ final class MarketplaceOrder
             throw new OrderException('Cannot place an order with no lines.');
         }
 
-        $order           = new self($id, $lines, $totalAmount, new \DateTimeImmutable());
+        $order           = new self($id, $lines, $totalAmount, new DateTimeImmutable());
         $order->events[] = new OrderPlaced($id, $order->placedAt);
 
         return $order;
@@ -62,7 +65,7 @@ final class MarketplaceOrder
         }
 
         $this->status   = OrderStatus::Paid;
-        $this->events[] = new OrderPaid($this->id, new \DateTimeImmutable());
+        $this->events[] = new OrderPaid($this->id, new DateTimeImmutable());
     }
 
     public function split(OrderSplitter $splitter): void
@@ -80,7 +83,7 @@ final class MarketplaceOrder
         $this->subOrders = $splitter->split($this->lines);
         $this->isSplit   = true;
         $this->status    = OrderStatus::Processing;
-        $this->events[]  = new OrderSplit($this->id, count($this->subOrders), new \DateTimeImmutable());
+        $this->events[]  = new OrderSplit($this->id, count($this->subOrders), new DateTimeImmutable());
     }
 
     public function complete(): void
@@ -92,7 +95,7 @@ final class MarketplaceOrder
         }
 
         $this->status   = OrderStatus::Completed;
-        $this->events[] = new OrderCompleted($this->id, new \DateTimeImmutable());
+        $this->events[] = new OrderCompleted($this->id, new DateTimeImmutable());
     }
 
     public function cancel(): void
@@ -104,7 +107,7 @@ final class MarketplaceOrder
         }
 
         $this->status   = OrderStatus::Cancelled;
-        $this->events[] = new OrderCancelled($this->id, new \DateTimeImmutable());
+        $this->events[] = new OrderCancelled($this->id, new DateTimeImmutable());
     }
 
     public function getId(): OrderId
@@ -128,7 +131,7 @@ final class MarketplaceOrder
         return $this->totalAmount;
     }
 
-    public function getPlacedAt(): \DateTimeImmutable
+    public function getPlacedAt(): DateTimeImmutable
     {
         return $this->placedAt;
     }

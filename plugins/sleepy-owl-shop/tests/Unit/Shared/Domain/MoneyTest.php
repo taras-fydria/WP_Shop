@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use SleepyOwl\Shared\Domain\Errors\MoneyAmountException;
 use SleepyOwl\Shared\Domain\Errors\MoneyCurrencyException;
-use SleepyOwl\Shared\Domain\Money;
+use SleepyOwl\Shared\Domain\Model\ValueObject\Money;
 
 test('creates money with positive amount', function () {
     $money = new Money(100, 'UAH');

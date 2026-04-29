@@ -51,16 +51,17 @@ Real payment integration (Stripe Connect, LiqPay) replaces the fake gateway late
 ## Step 4 — Order is split into sub-orders
 
 **Actor:** System  
-**Entities:** `MarketplaceOrder`, `VendorSubOrder`, `OrderLine`, `Commission`  
+**Entities:** `MarketplaceOrder`, `VendorSubOrder`, `OrderLine`, `CommissionRate`  
 **Events raised:** `OrderSplit`, `SubOrderCreated`
 
 This is the most complex step and the core domain logic of the system.
 
-`OrderSplitter` domain service groups `OrderLine` items by `VendorId`. For each vendor group it creates a `VendorSubOrder` with its own status lifecycle. `CommissionEngine` domain service calculates commission for each sub-order based on the vendor's `CommissionRate`.
+`OrderSplitter` domain service groups `OrderLine` items by `VendorId`. For each vendor group it creates a `VendorSubOrder` with its own status lifecycle. `CommissionEngine` reads each vendor's `CommissionRate` (owned by the Vendor aggregate) and snapshots it into the `VendorSubOrder` at split time.
+
+The snapshotted rate is immutable — if the Administrator later changes a vendor's commission, existing orders are not affected.
 
 Invariants enforced:
 - Each sub-order must have at least one line
-- Commission cannot exceed the sub-order subtotal
 - An order cannot be split more than once
 
 The buyer is never aware of the split. They see one `MarketplaceOrder` with one total.
@@ -87,13 +88,15 @@ Invariants enforced:
 **Entities:** `Shipment`, `TrackingNumber`, `DeliveryAddress`  
 **Events raised:** `ShipmentCreated`, `SubOrderDispatched`
 
-Vendor enters a tracking number from Nova Poshta (or another provider). The Shipping context creates a `Shipment` aggregate. `VendorSubOrder` transitions to `dispatched`.
+Vendor enters a tracking number from Nova Poshta (or another provider). The Shipping context creates a `Shipment` aggregate and raises `ShipmentCreated`. An Application handler listens to `ShipmentCreated` and calls `VendorSubOrder.dispatch()` — the sub-order transitions to `dispatched`.
+
+`TrackingNumber` belongs to the Shipping context (`Shipment` aggregate). The Order context does not store or validate it.
 
 `DeliveryAddress` is captured from the original order at shipment creation time — immutable afterwards.
 
 Invariants enforced:
-- `TrackingNumber` is required before dispatch
-- Cannot dispatch without a confirmed sub-order
+- `TrackingNumber` is required before `Shipment` can be dispatched (Shipping context invariant)
+- Cannot dispatch a `VendorSubOrder` without confirming it first (Order context invariant)
 
 ---
 

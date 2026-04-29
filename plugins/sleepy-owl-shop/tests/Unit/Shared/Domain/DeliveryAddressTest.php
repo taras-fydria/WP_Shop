@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use SleepyOwl\Shared\Domain\DeliveryAddress;
 use SleepyOwl\Shared\Domain\Errors\DeliveryAddressException;
+use SleepyOwl\Shared\Domain\Model\ValueObject\DeliveryAddress;
 
 test('creates delivery address with all fields', function () {
     $address = new DeliveryAddress(

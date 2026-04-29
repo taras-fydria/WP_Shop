@@ -13,11 +13,10 @@ use SleepyOwl\Order\Domain\Model\Aggregate\MarketplaceOrder;
 use SleepyOwl\Order\Domain\Model\ValueObject\OrderId;
 use SleepyOwl\Order\Domain\Model\ValueObject\OrderLine;
 use SleepyOwl\Order\Domain\Model\ValueObject\OrderStatus;
-use SleepyOwl\Order\Domain\Model\ValueObject\TrackingNumber;
 use SleepyOwl\Order\Domain\Service\CommissionEngine;
 use SleepyOwl\Order\Domain\Service\OrderSplitter;
-use SleepyOwl\Shared\Domain\Money;
-use SleepyOwl\Vendor\Domain\Model\ValueObject\VendorId;
+use SleepyOwl\Shared\Domain\Model\ValueObject\Money;
+use SleepyOwl\Shared\Domain\Model\ValueObject\VendorId;
 
 function makeLines(): array
 {
@@ -33,11 +32,7 @@ function makeSplitterForOrder(): OrderSplitter
 }
 
 test('place creates order in pending status', function () {
-    $order = MarketplaceOrder::place(
-        id:          new OrderId('order-1'),
-        lines:       makeLines(),
-        totalAmount: new Money(1300, 'UAH'),
-    );
+    $order = MarketplaceOrder::place(new OrderId('o'), makeLines(), new Money(1300, 'UAH'));
 
     expect($order->getStatus())->toBe(OrderStatus::Pending);
 });
@@ -116,7 +111,7 @@ test('complete transitions to completed when all sub-orders done', function () {
 
     foreach ($order->getSubOrders() as $subOrder) {
         $subOrder->confirm();
-        $subOrder->dispatch(new TrackingNumber('TTN-001'));
+        $subOrder->dispatch();
         $subOrder->complete();
     }
 
@@ -133,7 +128,7 @@ test('complete raises OrderCompleted event', function () {
 
     foreach ($order->getSubOrders() as $subOrder) {
         $subOrder->confirm();
-        $subOrder->dispatch(new TrackingNumber('TTN-001'));
+        $subOrder->dispatch();
         $subOrder->complete();
     }
 
@@ -181,14 +176,13 @@ test('cannot cancel after a sub-order is dispatched', function () {
 
     $subOrders = $order->getSubOrders();
     $subOrders[0]->confirm();
-    $subOrders[0]->dispatch(new TrackingNumber('TTN-001'));
+    $subOrders[0]->dispatch();
 
     expect(fn () => $order->cancel())->toThrow(OrderException::class);
 });
 
 test('releaseEvents clears event buffer', function () {
     $order = MarketplaceOrder::place(new OrderId('o'), makeLines(), new Money(1300, 'UAH'));
-
     $order->releaseEvents();
 
     expect($order->releaseEvents())->toBeEmpty();

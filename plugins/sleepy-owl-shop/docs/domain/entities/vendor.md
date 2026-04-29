@@ -16,7 +16,7 @@ Represents a seller registered on the marketplace. Owns its approval lifecycle a
 |------------------|------------------|----------------------------------------------------|
 | `id`             | `VendorId`       | Immutable after creation                           |
 | `status`         | `VendorStatus`   | `pending`, `approved`, `suspended`                 |
-| `commissionRate` | `CommissionRate` | Set by Administrator, used by `CommissionEngine`   |
+| `commissionRate` | `CommissionRate` | Set by Administrator. Applied to all sub-orders belonging to this vendor. Single source of truth for commission. |
 | `businessName`   | `string`         | Display name on the marketplace                    |
 | `paymentProfile` | `PaymentProfile` | Stripe account ID or LiqPay credentials (VO)       |
 | `createdAt`      | `DateTimeImmutable` |                                                 |

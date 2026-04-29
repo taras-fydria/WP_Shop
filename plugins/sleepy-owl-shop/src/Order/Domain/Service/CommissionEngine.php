@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace SleepyOwl\Order\Domain\Service;
 
-use SleepyOwl\Order\Domain\Model\ValueObject\Commission;
-use SleepyOwl\Vendor\Domain\Model\ValueObject\VendorId;
 
-final class CommissionEngine
+use SleepyOwl\Shared\Domain\Model\ValueObject\CommissionRate;
+use SleepyOwl\Shared\Domain\Model\ValueObject\VendorId;
+
+final class CommissionEngine implements CommissionEngineInterface
 {
     /**
      * @param array<string, int> $vendorRates  VendorId value => rate override
@@ -17,9 +18,9 @@ final class CommissionEngine
         private readonly array $vendorRates = [],
     ) {}
 
-    public function calculateFor(VendorId $vendorId): Commission
+    public function calculateFor(VendorId $vendorId): CommissionRate
     {
         $rate = $this->vendorRates[$vendorId->getValue()] ?? $this->defaultRate;
-        return new Commission($rate);
+        return new CommissionRate($rate);
     }
 }

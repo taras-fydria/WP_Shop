@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace SleepyOwl\Order\Domain\Event;
 
 use SleepyOwl\Order\Domain\Model\ValueObject\OrderId;
-use SleepyOwl\Shared\Domain\DomainEvent;
+use SleepyOwl\Shared\Domain\Events\DomainEvent;
 
 final readonly class OrderCancelled implements DomainEvent
 {

@@ -16,7 +16,7 @@ All domain entities use **UUID** identities — never WordPress post IDs or user
 | Context  | Aggregate root     | Key entities                    | Key value objects                                     |
 |----------|--------------------|---------------------------------|-------------------------------------------------------|
 | Vendor   | `Vendor`           | —                               | `VendorId`, `VendorStatus`, `CommissionRate`          |
-| Catalog  | `Product`          | —                               | `ProductId`, `ProductOwnership`, `Price`              |
+| Catalog  | `Product`          | —                               | `ProductId`, `ProductOwnership`, `Price`, `ProductStatus` |
 | Cart     | `Cart`             | `CartItem`                      | `CartId`, `Quantity`                                  |
 | Order    | `MarketplaceOrder` | `VendorSubOrder`, `OrderLine`   | `OrderId`, `OrderStatus`, `Commission`, `Money`       |
 | Payment  | `Payout`           | —                               | `PayoutId`, `PayoutStatus`, `Money`, `PaymentMethod`  |

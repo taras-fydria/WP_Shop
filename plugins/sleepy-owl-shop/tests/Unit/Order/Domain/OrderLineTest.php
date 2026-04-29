@@ -5,8 +5,8 @@ declare(strict_types=1);
 use SleepyOwl\Catalog\Domain\Model\ValueObject\ProductId;
 use SleepyOwl\Order\Domain\Exception\OrderException;
 use SleepyOwl\Order\Domain\Model\ValueObject\OrderLine;
-use SleepyOwl\Shared\Domain\Money;
-use SleepyOwl\Vendor\Domain\Model\ValueObject\VendorId;
+use SleepyOwl\Shared\Domain\Model\ValueObject\Money;
+use SleepyOwl\Shared\Domain\Model\ValueObject\VendorId;
 
 test('creates order line with valid data', function () {
     $line = new OrderLine(

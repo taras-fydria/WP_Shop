@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace SleepyOwl\Order\Domain\Model\ValueObject;
+namespace SleepyOwl\Shared\Domain\Model\ValueObject;
 
-final readonly class TrackingNumber
+final readonly class VendorId
 {
     public function __construct(private string $value)
     {
-        if (empty(trim($value))) {
-            throw new \InvalidArgumentException('TrackingNumber cannot be empty.');
+        if (empty($value)) {
+            throw new \InvalidArgumentException('VendorId cannot be empty.');
         }
     }
 

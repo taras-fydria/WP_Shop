@@ -7,8 +7,8 @@ use SleepyOwl\Order\Domain\Model\Entity\VendorSubOrder;
 use SleepyOwl\Order\Domain\Model\ValueObject\OrderLine;
 use SleepyOwl\Order\Domain\Service\CommissionEngine;
 use SleepyOwl\Order\Domain\Service\OrderSplitter;
-use SleepyOwl\Shared\Domain\Money;
-use SleepyOwl\Vendor\Domain\Model\ValueObject\VendorId;
+use SleepyOwl\Shared\Domain\Model\ValueObject\Money;
+use SleepyOwl\Shared\Domain\Model\ValueObject\VendorId;
 
 function makeSplitter(int $defaultRate = 10): OrderSplitter
 {
@@ -76,7 +76,7 @@ test('applies commission rate from engine to each sub-order', function () {
 
     $subOrders = $splitter->split($lines);
 
-    expect($subOrders[0]->getCommission()->getRate())->toBe(15);
+    expect($subOrders[0]->getCommissionRate()->getRate())->toBe(15);
 });
 
 test('returns VendorSubOrder instances', function () {

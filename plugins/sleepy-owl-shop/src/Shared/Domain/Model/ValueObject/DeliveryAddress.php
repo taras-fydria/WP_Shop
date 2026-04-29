@@ -1,6 +1,6 @@
 <?php
 
-namespace SleepyOwl\Shared\Domain;
+namespace SleepyOwl\Shared\Domain\Model\ValueObject;
 
 use SleepyOwl\Shared\Domain\Errors\DeliveryAddressException;
 

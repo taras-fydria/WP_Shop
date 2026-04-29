@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace SleepyOwl\Order\Domain\Model\Entity;
 
+use DateTimeImmutable;
+use DomainEvent;
 use SleepyOwl\Order\Domain\Event\SubOrderCompleted;
 use SleepyOwl\Order\Domain\Event\SubOrderConfirmed;
 use SleepyOwl\Order\Domain\Event\SubOrderDispatched;
 use SleepyOwl\Order\Domain\Exception\OrderException;
-use SleepyOwl\Order\Domain\Model\ValueObject\Commission;
 use SleepyOwl\Order\Domain\Model\ValueObject\OrderLine;
 use SleepyOwl\Order\Domain\Model\ValueObject\SubOrderId;
 use SleepyOwl\Order\Domain\Model\ValueObject\SubOrderStatus;
-use SleepyOwl\Order\Domain\Model\ValueObject\TrackingNumber;
-use SleepyOwl\Shared\Domain\DomainEvent;
-use SleepyOwl\Shared\Domain\Money;
-use SleepyOwl\Vendor\Domain\Model\ValueObject\VendorId;
+use SleepyOwl\Shared\Domain\Model\ValueObject\CommissionRate;
+use SleepyOwl\Shared\Domain\Model\ValueObject\Money;
+use SleepyOwl\Shared\Domain\Model\ValueObject\VendorId;
 
 final class VendorSubOrder
 {
@@ -31,7 +31,7 @@ final class VendorSubOrder
         private readonly SubOrderId $id,
         private readonly VendorId $vendorId,
         private readonly array $lines,
-        private readonly Commission $commission,
+        private readonly CommissionRate $commissionRate,
     ) {
         if (empty($lines)) {
             throw new OrderException('VendorSubOrder must have at least one line.');
@@ -53,10 +53,10 @@ final class VendorSubOrder
         }
 
         $this->status   = SubOrderStatus::Confirmed;
-        $this->events[] = new SubOrderConfirmed($this->id, new \DateTimeImmutable());
+        $this->events[] = new SubOrderConfirmed($this->id, new DateTimeImmutable());
     }
 
-    public function dispatch(TrackingNumber $trackingNumber): void
+    public function dispatch(): void
     {
         if ($this->status !== SubOrderStatus::Confirmed) {
             throw new OrderException(
@@ -65,7 +65,7 @@ final class VendorSubOrder
         }
 
         $this->status   = SubOrderStatus::Dispatched;
-        $this->events[] = new SubOrderDispatched($this->id, $trackingNumber, new \DateTimeImmutable());
+        $this->events[] = new SubOrderDispatched($this->id, new DateTimeImmutable());
     }
 
     public function complete(): void
@@ -77,7 +77,7 @@ final class VendorSubOrder
         }
 
         $this->status   = SubOrderStatus::Completed;
-        $this->events[] = new SubOrderCompleted($this->id, new \DateTimeImmutable());
+        $this->events[] = new SubOrderCompleted($this->id, new DateTimeImmutable());
     }
 
     public function getId(): SubOrderId
@@ -106,9 +106,9 @@ final class VendorSubOrder
         return $this->subtotal;
     }
 
-    public function getCommission(): Commission
+    public function getCommissionRate(): CommissionRate
     {
-        return $this->commission;
+        return $this->commissionRate;
     }
 
     /** @return DomainEvent[] */

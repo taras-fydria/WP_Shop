@@ -5,10 +5,10 @@
 **File:** `src/Catalog/Domain/Model/Product.php`
 
 ## Description
-Represents a product listing owned by a specific vendor. Tracks ownership, pricing, and commission policy. The actual WooCommerce product post is the storage mechanism — this aggregate wraps the domain rules around it.
+Represents a product listing owned by a specific vendor. Tracks ownership and pricing. Commission is fixed per vendor — products do not override it. Product data is persisted via `ProductRepository` in the Infrastructure layer. The domain aggregate owns the rules — storage is an infrastructure concern.
 
 ## Identity
-`ProductId` — wraps the WooCommerce post ID. Immutable after creation.
+`ProductId` — UUID, immutable after creation.
 
 ## State (value objects)
 
@@ -16,15 +16,13 @@ Represents a product listing owned by a specific vendor. Tracks ownership, prici
 |----------------|--------------------|-------------------------------------------------|
 | `id`           | `ProductId`        | Immutable                                       |
 | `ownership`    | `ProductOwnership` | Contains `VendorId` — who owns this product     |
-| `price`        | `Price`            | Contains amount + currency                      |
+| `price`        | `Money`            | Reuses `Shared\Domain\Money` — amount + currency |
 | `status`       | `ProductStatus`    | `draft`, `active`, `deactivated`                |
-| `commissionPolicy` | `CommissionPolicy` | Override or inherit vendor-level rate       |
 
 ## Invariants
 - A product must always have an owner (`VendorId`)
 - Price must be positive
 - A deactivated product cannot receive new orders
-- Commission policy override, if set, must be between 0% and 100%
 
 ## Behaviour (methods)
 
@@ -33,8 +31,7 @@ Represents a product listing owned by a specific vendor. Tracks ownership, prici
 | `assignToVendor(VendorId)`        | Sets ownership, raises `ProductOwnershipAssigned`     |
 | `activate()`                      | Makes product visible, raises `ProductActivated`      |
 | `deactivate()`                    | Hides product, raises `ProductDeactivated`            |
-| `updatePrice(Price)`              | Updates price, raises `ProductPriceUpdated`           |
-| `setCommissionPolicy(CommissionPolicy)` | Overrides vendor-level rate                    |
+| `updatePrice(Money)`              | Updates price, raises `ProductPriceUpdated`           |
 
 ## Domain events raised
 
