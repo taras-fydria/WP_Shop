@@ -3,6 +3,8 @@
 | Context | Artifact | Code | Tests | Notes |
 |---------|----------|------|-------|-------|
 | **Shared** | `DomainEvent` interface | ✅ | — | |
+| **Shared** | `AbstractDomainEvent` base class | ✅ | — | Auto-sets `occurredAt` |
+| **Shared** | `AggregateRoot` base class | ✅ | — | `raiseEvent()` + `releaseEvents()` |
 | **Shared** | `Money` VO | ✅ | ✅ | |
 | **Shared** | `DeliveryAddress` VO | ✅ | ✅ | |
 | **Shared** | `CommissionRate` VO | ✅ | ✅ | |
@@ -18,13 +20,13 @@
 | **Cart** | `CartId`, `Quantity` VOs | ✅ | ✅ | |
 | **Cart** | Domain events (ItemAdded, ItemRemoved, QuantityUpdated, CartCleared, CartCheckedOut) | ✅ | — | |
 | **Catalog** | `ProductId` VO | ✅ | — | |
-| **Catalog** | [`Product` aggregate](entities/product.md) | ❌ | ❌ | |
-| **Catalog** | `ProductOwnership`, `Price`, `ProductStatus` VOs | ❌ | ❌ | |
-| **Catalog** | Domain events (ProductCreated, ProductActivated, ProductDeactivated, ProductPriceUpdated) | ❌ | ❌ | |
+| **Catalog** | [`Product` aggregate](entities/product.md) | ✅ | ✅ | |
+| **Catalog** | `ProductOwnership`, `ProductStatus` VOs | ✅ | — | |
+| **Catalog** | Domain events (ProductCreated, ProductOwnershipAssigned, ProductActivated, ProductDeactivated, ProductPriceUpdated) | ✅ | — | |
 | **Vendor** | `VendorId` VO | ✅ | — | |
-| **Vendor** | [`Vendor` aggregate](entities/vendor.md) | ❌ | ❌ | |
-| **Vendor** | `VendorStatus`, `PaymentProfile` VOs | ❌ | ❌ | |
-| **Vendor** | Domain events (VendorRegistered, VendorApproved, VendorSuspended, VendorReinstated, CommissionRateUpdated) | ❌ | ❌ | |
+| **Vendor** | [`Vendor` aggregate](entities/vendor.md) | ✅ | ✅ | |
+| **Vendor** | `VendorStatus`, `PaymentProfile` VOs | ✅ | — | |
+| **Vendor** | Domain events (VendorRegistered, VendorApproved, VendorSuspended, VendorReinstated, CommissionRateUpdated) | ✅ | — | |
 | **Payment** | [`Payout` aggregate](entities/payout_shipment.md#entity-payout) | ❌ | ❌ | |
 | **Payment** | `PayoutId`, `PayoutStatus`, `PaymentMethod` VOs | ❌ | ❌ | |
 | **Payment** | `PaymentGatewayInterface` port | ❌ | ❌ | |

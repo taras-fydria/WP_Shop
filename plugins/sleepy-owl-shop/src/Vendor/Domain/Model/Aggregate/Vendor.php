@@ -22,18 +22,24 @@ final class Vendor extends AggregateRoot
     private CommissionRate $commissionRate;
 
     private function __construct(
-        private readonly VendorId $id,
-        private readonly string $businessName,
-        CommissionRate $commissionRate,
+        private readonly VendorId          $id,
+        private readonly string            $businessName,
         private readonly DateTimeImmutable $createdAt,
-    ) {
+        CommissionRate                     $commissionRate,
+    )
+    {
         $this->status         = VendorStatus::Pending;
         $this->commissionRate = $commissionRate;
     }
 
     public static function register(VendorId $id, string $businessName, CommissionRate $commissionRate): self
     {
-        $vendor = new self($id, $businessName, $commissionRate, new DateTimeImmutable());
+        $createdAt = new DateTimeImmutable();
+        $vendor    = new self(
+            id: $id,
+            businessName: $businessName,
+            createdAt: $createdAt,
+            commissionRate: $commissionRate);
         $vendor->raiseEvent(new VendorRegistered($id));
 
         return $vendor;
