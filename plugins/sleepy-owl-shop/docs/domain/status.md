@@ -27,14 +27,21 @@
 | **Vendor** | [`Vendor` aggregate](entities/vendor.md) | ✅ | ✅ | |
 | **Vendor** | `VendorStatus`, `PaymentProfile` VOs | ✅ | — | |
 | **Vendor** | Domain events (VendorRegistered, VendorApproved, VendorSuspended, VendorReinstated, CommissionRateUpdated) | ✅ | — | |
-| **Payment** | [`Payout` aggregate](entities/payout_shipment.md#entity-payout) | ❌ | ❌ | |
-| **Payment** | `PayoutId`, `PayoutStatus`, `PaymentMethod` VOs | ❌ | ❌ | |
-| **Payment** | `PaymentGatewayInterface` port | ❌ | ❌ | |
-| **Payment** | Domain events (PayoutInitiated, PayoutCompleted, PayoutFailed) | ❌ | ❌ | |
-| **Shipping** | [`Shipment` aggregate](entities/payout_shipment.md#entity-shipment) | ❌ | ❌ | |
-| **Shipping** | `ShipmentId`, `TrackingNumber`, `ShipmentStatus` VOs | ❌ | ❌ | |
-| **Shipping** | `ShippingProviderInterface` port | ❌ | ❌ | |
-| **Shipping** | Domain events (ShipmentCreated, ShipmentDispatched, TrackingUpdated, ShipmentDelivered) | ❌ | ❌ | |
-| **Review** | [`Review` aggregate](entities/review.md) | ❌ | ❌ | |
-| **Review** | `ReviewId`, `Rating`, `ReviewStatus` VOs | ❌ | ❌ | |
-| **Review** | Domain events (ReviewSubmitted, ReviewApproved, ReviewRejected) | ❌ | ❌ | |
+| **Payment** | [`Payout` aggregate](entities/payout_shipment.md#entity-payout) | ✅ | ✅ | |
+| **Payment** | `PayoutId`, `PayoutStatus`, `PaymentMethod` VOs | ✅ | ❌ | |
+| **Payment** | `PaymentGatewayInterface` port | ✅ | — | |
+| **Payment** | Domain events (PayoutInitiated, PayoutCompleted, PayoutFailed) | ✅ | — | |
+| **Shipping** | [`Shipment` aggregate](entities/payout_shipment.md#entity-shipment) | ✅ | ✅ | |
+| **Shipping** | `ShipmentId`, `TrackingNumber`, `ShipmentStatus` VOs | ✅ | ❌ | |
+| **Shipping** | `ShippingProviderInterface` port | ✅ | — | |
+| **Shipping** | Domain events (ShipmentCreated, ShipmentDispatched, TrackingUpdated, ShipmentDelivered) | ✅ | — | |
+| **Review** | [`Review` aggregate](entities/review.md) | ✅ | ✅ | |
+| **Review** | `ReviewId`, `Rating`, `ReviewStatus` VOs | ✅ | ❌ | |
+| **Review** | Domain events (ReviewSubmitted, ReviewApproved, ReviewRejected) | ✅ | — | |
+| **Vendor** | [`VendorRepositoryInterface`](repositories.md#vendorrepositoryinterface) | ❌ | — | Domain port |
+| **Catalog** | [`ProductRepositoryInterface`](repositories.md#productrepositoryinterface) | ❌ | — | Domain port |
+| **Cart** | [`CartRepositoryInterface`](repositories.md#cartrepositoryinterface) | ❌ | — | Domain port |
+| **Order** | [`OrderRepositoryInterface`](repositories.md#orderrepositoryinterface) | ❌ | — | Domain port |
+| **Payment** | [`PayoutRepositoryInterface`](repositories.md#payoutrepositoryinterface) | ❌ | — | Domain port |
+| **Shipping** | [`ShipmentRepositoryInterface`](repositories.md#shipmentrepositoryinterface) | ❌ | — | Domain port |
+| **Review** | [`ReviewRepositoryInterface`](repositories.md#reviewrepositoryinterface) | ❌ | — | Domain port |

@@ -9,3 +9,4 @@ plugins/*
   # except our plugin
 !plugins/sleepy-owl-shop/
 /plugins/sleepy-owl-shop/vendor/
+/plugins/sleepy-owl-shop/CLAUDE.md
