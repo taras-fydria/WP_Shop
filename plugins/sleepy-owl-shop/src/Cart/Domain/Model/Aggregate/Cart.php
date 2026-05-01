@@ -53,7 +53,6 @@ final class Cart extends AggregateRoot
             $vendorId,
             $this->items[$key]->getQuantity(),
             $unitPrice,
-            new DateTimeImmutable(),
         ));
     }
 
