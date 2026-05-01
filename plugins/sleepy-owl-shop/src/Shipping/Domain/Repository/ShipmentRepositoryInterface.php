@@ -17,4 +17,6 @@ interface ShipmentRepositoryInterface
     public function add(Shipment $shipment): void;
 
     public function update(Shipment $shipment): void;
+
+    public function delete(ShipmentId $id): void;
 }

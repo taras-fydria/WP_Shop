@@ -14,4 +14,6 @@ interface VendorRepositoryInterface
     public function add(Vendor $vendor): void;
 
     public function update(Vendor $vendor): void;
+
+    public function delete(VendorId $id): void;
 }

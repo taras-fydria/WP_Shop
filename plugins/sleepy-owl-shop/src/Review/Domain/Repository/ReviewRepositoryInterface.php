@@ -14,4 +14,6 @@ interface ReviewRepositoryInterface
     public function add(Review $review): void;
 
     public function update(Review $review): void;
+
+    public function delete(ReviewId $id): void;
 }

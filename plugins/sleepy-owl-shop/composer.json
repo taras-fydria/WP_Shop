@@ -5,7 +5,9 @@
         "php": ">=8.2"
     },
     "require-dev": {
-        "pestphp/pest": "^3.0"
+        "pestphp/pest": "^3.0",
+        "mockery/mockery": "^1.6",
+        "dg/bypass-finals": "^1.9"
     },
     "autoload": {
         "psr-4": {

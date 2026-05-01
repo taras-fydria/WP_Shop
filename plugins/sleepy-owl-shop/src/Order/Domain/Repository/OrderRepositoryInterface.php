@@ -14,4 +14,6 @@ interface OrderRepositoryInterface
     public function add(MarketplaceOrder $order): void;
 
     public function update(MarketplaceOrder $order): void;
+
+    public function delete(OrderId $id): void;
 }

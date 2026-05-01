@@ -17,4 +17,6 @@ interface PayoutRepositoryInterface
     public function add(Payout $payout): void;
 
     public function update(Payout $payout): void;
+
+    public function delete(PayoutId $id): void;
 }

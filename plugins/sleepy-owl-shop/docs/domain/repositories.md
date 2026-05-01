@@ -21,6 +21,7 @@ Each repository has explicit `add()` (INSERT) and `update()` methods. The use ca
 | `findById`   | `findById(VendorId): ?Vendor` | Returns `null` if not found    |
 | `add`        | `add(Vendor): void`           | INSERT — fails if exists       |
 | `update`     | `update(Vendor): void`        | UPDATE — fails if not found    |
+| `delete`     | `delete(VendorId): void`      | DELETE — hard remove by ID     |
 
 ---
 
@@ -34,6 +35,7 @@ Each repository has explicit `add()` (INSERT) and `update()` methods. The use ca
 | `findById` | `findById(ProductId): ?Product`  | Returns `null` if not found |
 | `add`      | `add(Product): void`             | INSERT — fails if exists    |
 | `update`   | `update(Product): void`          | UPDATE — fails if not found |
+| `delete`   | `delete(ProductId): void`        | DELETE — hard remove by ID  |
 
 ---
 
@@ -63,6 +65,7 @@ Each repository has explicit `add()` (INSERT) and `update()` methods. The use ca
 | `findById` | `findById(OrderId): ?MarketplaceOrder`     | Returns `null` if not found                                                  |
 | `add`      | `add(MarketplaceOrder): void`              | INSERT aggregate — includes sub-orders and order lines                       |
 | `update`   | `update(MarketplaceOrder): void`           | UPDATE aggregate — persists sub-order and order line changes                 |
+| `delete`   | `delete(OrderId): void`                    | DELETE — hard remove by ID                                                   |
 
 **Note:** `MarketplaceOrder` is the aggregate root and owns `VendorSubOrder[]`. The repository always reconstitutes and persists the full aggregate — sub-orders are not fetched or saved independently.
 
@@ -75,10 +78,11 @@ Each repository has explicit `add()` (INSERT) and `update()` methods. The use ca
 
 | Method              | Signature                            | Description                              |
 |---------------------|--------------------------------------|------------------------------------------|
-| `findById`          | `findById(PayoutId): ?Payout`        | Returns `null` if not found              |
-| `findBySubOrderId`  | `findBySubOrderId(SubOrderId): ?Payout` | Lookup payout for a specific sub-order |
-| `add`               | `add(Payout): void`                  | INSERT — fails if exists                 |
-| `update`            | `update(Payout): void`               | UPDATE — fails if not found              |
+| `findById`          | `findById(PayoutId): ?Payout`           | Returns `null` if not found              |
+| `findBySubOrderId`  | `findBySubOrderId(SubOrderId): ?Payout` | Lookup payout for a specific sub-order   |
+| `add`               | `add(Payout): void`                     | INSERT — fails if exists                 |
+| `update`            | `update(Payout): void`                  | UPDATE — fails if not found              |
+| `delete`            | `delete(PayoutId): void`                | DELETE — hard remove by ID               |
 
 ---
 
@@ -89,10 +93,11 @@ Each repository has explicit `add()` (INSERT) and `update()` methods. The use ca
 
 | Method              | Signature                               | Description                               |
 |---------------------|-----------------------------------------|-------------------------------------------|
-| `findById`          | `findById(ShipmentId): ?Shipment`       | Returns `null` if not found               |
-| `findBySubOrderId`  | `findBySubOrderId(SubOrderId): ?Shipment` | Lookup shipment for a specific sub-order|
-| `add`               | `add(Shipment): void`                   | INSERT — fails if exists                  |
-| `update`            | `update(Shipment): void`                | UPDATE — fails if not found               |
+| `findById`          | `findById(ShipmentId): ?Shipment`         | Returns `null` if not found               |
+| `findBySubOrderId`  | `findBySubOrderId(SubOrderId): ?Shipment` | Lookup shipment for a specific sub-order  |
+| `add`               | `add(Shipment): void`                     | INSERT — fails if exists                  |
+| `update`            | `update(Shipment): void`                  | UPDATE — fails if not found               |
+| `delete`            | `delete(ShipmentId): void`                | DELETE — hard remove by ID                |
 
 **Note:** Used by `TrackingPollingJob` (WP-Cron) — polling queries all active shipments, then saves updated status via this interface.
 
@@ -108,6 +113,7 @@ Each repository has explicit `add()` (INSERT) and `update()` methods. The use ca
 | `findById` | `findById(ReviewId): ?Review`  | Returns `null` if not found |
 | `add`      | `add(Review): void`            | INSERT — fails if exists    |
 | `update`   | `update(Review): void`         | UPDATE — fails if not found |
+| `delete`   | `delete(ReviewId): void`       | DELETE — hard remove by ID  |
 
 ---
 
