@@ -6,6 +6,7 @@ namespace Tests\Fake\Vendor;
 
 use SleepyOwl\Shared\Domain\Model\ValueObject\VendorId;
 use SleepyOwl\Vendor\Domain\Model\Aggregate\Vendor;
+use SleepyOwl\Vendor\Domain\Model\ValueObject\VendorStatus;
 use SleepyOwl\Vendor\Domain\Repository\VendorRepositoryInterface;
 
 final class InMemoryVendorRepository implements VendorRepositoryInterface
@@ -15,6 +16,18 @@ final class InMemoryVendorRepository implements VendorRepositoryInterface
     public function findById(VendorId $id): ?Vendor
     {
         return $this->vendors[$id->getValue()] ?? null;
+    }
+
+    public function findAll(?VendorStatus $status = null): array
+    {
+        if ($status === null) {
+            return array_values($this->vendors);
+        }
+
+        return array_values(array_filter(
+            $this->vendors,
+            fn(Vendor $v) => $v->getStatus() === $status,
+        ));
     }
 
     public function add(Vendor $vendor): void

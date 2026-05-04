@@ -143,6 +143,8 @@ Queries load aggregates via the existing write repository and map them to read m
 
 | Query | Handler | Returns | Consumer |
 |-------|---------|---------|----------|
+| `GetVendorQuery` | `GetVendorHandler` | `VendorReadModel\|null` | Manager/Vendor — single vendor profile |
+| `ListVendorsQuery` | `ListVendorsHandler` | `VendorReadModel[]` | Manager — pending list; Admin — all vendors |
 | `GetOrderQuery` | `GetOrderHandler` | `OrderReadModel` | Buyer — sees one order, sub-orders hidden |
 | `GetVendorSubOrdersQuery` | `GetVendorSubOrdersHandler` | `SubOrderReadModel[]` | Vendor — sees own sub-orders only |
 | `GetVendorProductsQuery` | `GetVendorProductsHandler` | `ProductReadModel[]` | Vendor — own product listing |

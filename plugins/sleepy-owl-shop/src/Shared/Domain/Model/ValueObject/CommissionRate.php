@@ -6,7 +6,7 @@ namespace SleepyOwl\Shared\Domain\Model\ValueObject;
 
 final readonly class CommissionRate
 {
-    public function __construct(private int $rate)
+    public function __construct(private int|float $rate)
     {
         if ($rate < 0 || $rate > 100) {
             throw new \DomainException(
@@ -15,14 +15,14 @@ final readonly class CommissionRate
         }
     }
 
-    public function getRate(): int
+    public function getRate(): int|float
     {
         return $this->rate;
     }
 
     public function isZero(): bool
     {
-        return $this->rate === 0;
+        return $this->rate == 0;
     }
 
     public function applyTo(Money $subtotal): Money

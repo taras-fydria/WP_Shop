@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 use SleepyOwl\Plugin;
 
+define('SLEEPY_OWL_SHOP_PLUGIN_FILE', __FILE__);
 define('SLEEPY_OWL_SHOP_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 require_once __DIR__ . '/vendor/autoload.php';

@@ -6,6 +6,7 @@ namespace SleepyOwl;
 
 use SleepyOwl\Base\IHookRegister;
 use SleepyOwl\Base\Singleton;
+use SleepyOwl\Migration\MigrationRunner;
 
 class Plugin extends Singleton
 {
@@ -20,7 +21,19 @@ class Plugin extends Singleton
     protected function __construct()
     {
         parent::__construct();
+        $this->registerActivationHook();
         $this->registerHooks();
+    }
+
+    private function registerActivationHook(): void
+    {
+        register_activation_hook(
+            SLEEPY_OWL_SHOP_PLUGIN_FILE,
+            static function (): void {
+                global $wpdb;
+                MigrationRunner::run($wpdb);
+            }
+        );
     }
 
     public function registerHooks(): void

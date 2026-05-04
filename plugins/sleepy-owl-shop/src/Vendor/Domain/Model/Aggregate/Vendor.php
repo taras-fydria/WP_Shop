@@ -32,6 +32,19 @@ final class Vendor extends AggregateRoot
         $this->commissionRate = $commissionRate;
     }
 
+    public static function reconstitute(
+        VendorId          $id,
+        string            $businessName,
+        VendorStatus      $status,
+        CommissionRate    $commissionRate,
+        DateTimeImmutable $createdAt,
+    ): self {
+        $vendor         = new self($id, $businessName, $createdAt, $commissionRate);
+        $vendor->status = $status;
+
+        return $vendor;
+    }
+
     public static function register(VendorId $id, string $businessName, CommissionRate $commissionRate): self
     {
         $createdAt = new DateTimeImmutable();

@@ -141,3 +141,22 @@ test('releaseEvents clears event buffer', function () {
 
     expect($vendor->releaseEvents())->toBeEmpty();
 });
+
+test('reconstitute restores vendor state without raising events', function () {
+    $createdAt = new DateTimeImmutable('2024-01-15 10:00:00');
+
+    $vendor = Vendor::reconstitute(
+        id: new VendorId('abc-123'),
+        businessName: 'Restored Shop',
+        status: VendorStatus::Approved,
+        commissionRate: new CommissionRate(15),
+        createdAt: $createdAt,
+    );
+
+    expect($vendor->getId()->getValue())->toBe('abc-123')
+        ->and($vendor->getBusinessName())->toBe('Restored Shop')
+        ->and($vendor->getStatus())->toBe(VendorStatus::Approved)
+        ->and($vendor->getCommissionRate()->getRate())->toBe(15)
+        ->and($vendor->getCreatedAt())->toEqual($createdAt)
+        ->and($vendor->releaseEvents())->toBeEmpty();
+});
